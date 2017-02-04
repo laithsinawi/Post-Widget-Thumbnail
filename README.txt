@@ -8,7 +8,7 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Display thumbnail images from posts by category in grid format
+Display thumbnail images in grid format from posts by category
 
 == Description ==
 

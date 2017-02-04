@@ -1,29 +1,17 @@
 <?php
 /**
- * WordPress Widget Boilerplate
- *
- * The WordPress Widget Boilerplate is an organized, maintainable boilerplate for building widgets using WordPress best practices.
- *
- * @package   Post_Widget_Thumbnail
- * @author    Your Name <email@example.com>
- * @license   GPL-2.0+
- * @link      http://example.com
- * @copyright 2014 Your Name or Company Name
- *
- * @wordpress-plugin
- * Plugin Name:       @TODO
- * Plugin URI:        @TODO
- * Description:       @TODO
- * Version:           1.0.0
- * Author:            @TODO
- * Author URI:        @TODO
- * Text Domain:       post-widget-thumbnail
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Domain Path:       /lang
+ * Plugin Name: Post Widget Thumbnail
+ * Plugin URI: https://wordpress.org/plugins/post-widget-thumbnail
+ * Description: Display thumbnail images in grid format from posts by category.
+ * Author: Laith Sinawi
+ * Author URI: http://www.sinawiwebdesign.com
+ * Version: 1.0.0
+ * Text Domain: post-widget-thumbnail
+ * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * Domain Path:     /lang
  * GitHub Plugin URI: https://github.com/<owner>/<repo>
  */
- 
+
  // Prevent direct file access
 if ( ! defined ( 'ABSPATH' ) ) {
 	exit;
@@ -65,7 +53,7 @@ class Post_Widget_Thumbnail extends WP_Widget {
 
 		parent::__construct(
 			$this->get_widget_slug(),
-			__( 'Widget Name', $this->get_widget_slug() ),
+			__( 'Post Widget Thumbnail', $this->get_widget_slug() ),
 			array(
 				'classname'  => $this->get_widget_slug().'-class',
 				'description' => __( 'Display thumbnails from posts featured image.', $this->get_widget_slug() )
@@ -79,11 +67,6 @@ class Post_Widget_Thumbnail extends WP_Widget {
 		// Register site styles and scripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
-
-		// Refreshing the widget's cached output with each new post
-		add_action( 'save_post',    array( $this, 'flush_widget_cache' ) );
-		add_action( 'deleted_post', array( $this, 'flush_widget_cache' ) );
-		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
 
 	} // end constructor
 
@@ -111,46 +94,11 @@ class Post_Widget_Thumbnail extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
-		
-		// Check if there is a cached output
-		$cache = wp_cache_get( $this->get_widget_slug(), 'widget' );
-
-		if ( !is_array( $cache ) )
-			$cache = array();
-
-		if ( ! isset ( $args['widget_id'] ) )
-			$args['widget_id'] = $this->id;
-
-		if ( isset ( $cache[ $args['widget_id'] ] ) )
-			return print $cache[ $args['widget_id'] ];
-		
-		// go on with your widget logic, put everything into a string and …
-
-
-		extract( $args, EXTR_SKIP );
-
-		$widget_string = $before_widget;
-
-		// TODO: Here is where you manipulate your widget's values based on their input fields
-		ob_start();
-		include( plugin_dir_path( __FILE__ ) . 'views/widget.php' );
-		$widget_string .= ob_get_clean();
-		$widget_string .= $after_widget;
-
-
-		$cache[ $args['widget_id'] ] = $widget_string;
-
-		wp_cache_set( $this->get_widget_slug(), $cache, 'widget' );
-
-		print $widget_string;
+	// Display widget on the frontend
+	include( plugin_dir_path(__FILE__) . 'views/widget.php' );
 
 	} // end widget
-	
-	
-	public function flush_widget_cache() 
-	{
-    	wp_cache_delete( $this->get_widget_slug(), 'widget' );
-	}
+
 	/**
 	 * Processes the widget's options to be saved.
 	 *
@@ -160,8 +108,8 @@ class Post_Widget_Thumbnail extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = $old_instance;
-
-		// TODO: Here is where you update your widget's old values with the new, incoming values
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['pwt-post-type'] = ( ! empty( $new_instance['pwt-post-type'] ) ) ? strip_tags( $new_instance['pwt-post-type'] ) : '';
 
 		return $instance;
 
@@ -174,10 +122,13 @@ class Post_Widget_Thumbnail extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
+	$title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'Recent Work', 'post-widget-thumbnail' );
+	$type   = ! empty( $instance['pwt-post-type'] ) ? $instance['pwt-post-type'] : '';
+
 		// TODO: Define default values for your variables
-		$instance = wp_parse_args(
-			(array) $instance
-		);
+//		$instance = wp_parse_args(
+//			(array) $instance
+//		);
 
 		// TODO: Store the values of the widget in their own variable
 
